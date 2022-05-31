@@ -95,11 +95,11 @@ function App() {
   }
 
   const grid_comp = grid.map((row, index) =>
-    <li className="h-1/3 ">
-      <div className="flex flex-row">
-        <Cell mark={row[0]} row={index} col={0} key={`cell-${index}-0`} add_mark={add_mark} />
-        <Cell mark={row[1]} row={index} col={1} key={`cell-${index}-1`} add_mark={add_mark} />
-        <Cell mark={row[2]} row={index} col={2} key={`cell-${index}-2`} add_mark={add_mark} />
+    <li className="h-1/3" key={`li-${index}`}>
+      <div className="flex flex-row" >
+        <Cell mark={row[0]} row={index} col={0} add_mark={add_mark} />
+        <Cell mark={row[1]} row={index} col={1} add_mark={add_mark} />
+        <Cell mark={row[2]} row={index} col={2} add_mark={add_mark} />
       </div>
     </li>
   )
