@@ -4,11 +4,10 @@ import { useLocation } from 'react-router-dom';
 import Cell from '../components/Cell.tsx'
 
 import db from '../assets/js/firestore.js'
-import { getGameByName, addGame, replaceGrid, addPlayer, getGameRef } from '../assets/js/games.js'
+import { Game, getGameByName, addGame, replaceGrid, addPlayer, getGameRef } from '../assets/js/games.js'
   
 
 import { onSnapshot, doc } from "firebase/firestore"
-
 
 /**
  * This function checks if one player won by filling a row
@@ -69,7 +68,7 @@ function TicTacToe() {
   const gameName = location.state.gameName
 
   async function getGame(gameName) {
-    let game = await getGameByName(gameName)
+    let game: Game = await getGameByName(gameName)
 
     if (game !== null) { // game already exists
 
@@ -95,7 +94,7 @@ function TicTacToe() {
     }
     else { // game doesn't exist
 
-      let game = {
+      let game:Game = {
         grid: [0,0,0,0,0,0,0,0,0],
         name: gameName,
         nb_players: 1, 
@@ -105,29 +104,35 @@ function TicTacToe() {
       setPlayerTurn(1)
       setPlayer(1)
 
+      console.log(typeof game)
+
       await addGame(game)
     }
   }
 
-  const unsub = onSnapshot(doc(db, "games", `game-${gameName}`), (doc) => {
-    const grid = doc.data().grid;
-    const playerTurn_data = doc.data().player_turn;
+  try {
+    const unsub = onSnapshot(doc(db, "games", `game-${gameName}`), (doc) => {
+      const grid = doc.data().grid;
+      const playerTurn_data = doc.data().player_turn;
 
-    let cells = []
-    for (let i = 0; i<3; i++){
-      cells.push([grid[3*i],grid[3*i+1],grid[3*i+2]])
-    }
+      let cells = []
+      for (let i = 0; i<3; i++){
+        cells.push([grid[3*i],grid[3*i+1],grid[3*i+2]])
+      }
 
-    let nb_cells_placed = 0;
-    grid.forEach(cell=>{
-      if (cell != 0) nb_cells_placed++;
-    })
+      let nb_cells_placed = 0;
+      grid.forEach(cell=>{
+        if (cell != 0) nb_cells_placed++;
+      })
 
-    checkWinner(cells)  
-    setGrid(cells)
-    setPlayerTurn(playerTurn_data) // setting the local player turn ti the game's current player turn
+      checkWinner(cells)  
+      setGrid(cells)
+      setPlayerTurn(playerTurn_data) // setting the local player turn ti the game's current player turn
 
-  });
+    });
+  } catch (e) {
+    console.log(`Error: ${e}`)
+  }
 
   useEffect(()=>{
     async function _get_game(){
@@ -183,6 +188,9 @@ function TicTacToe() {
   }
 
   const resetGrid = async () => {
+
+    if (player !== 1 || player !== 2) return; // spectators cannot reset the game
+
     setGrid([[0,0,0],[0,0,0],[0,0,0]])
     setPlayerTurn(1)
     setGameOver(false)

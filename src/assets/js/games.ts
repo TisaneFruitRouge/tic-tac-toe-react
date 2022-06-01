@@ -1,13 +1,21 @@
 import db from './firestore.js'
 import { setDoc, addDoc, getDoc, updateDoc, collection, doc, onSnapshot } from 'firebase/firestore'
 
+type Game = {
+  grid: Array<number>,
+  name: string,
+  nb_players: number,
+  player_turn: number
+}
+
+
 /**
  * This function returns a game, which name was given as a parameter to this function
  * Returns null if the game doesn't exist
  */
 async function getGameByName(name) {
   
-  let data = null;
+  let data:Game = null;
 
   const gameRef = doc(db, "games", `game-${name}`);
   const gameSnap = await getDoc(gameRef);
@@ -22,7 +30,7 @@ async function getGameByName(name) {
 /**
  * This function adds a game into the 'games' collection on the firestore
  */
-async function addGame(game) {
+async function addGame(game: Game) {
 
   let name = game.name
 
