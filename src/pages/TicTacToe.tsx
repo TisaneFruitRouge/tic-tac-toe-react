@@ -68,7 +68,7 @@ function TicTacToe() {
   const gameName = location.state.gameName
 
   async function getGame(gameName: string) {
-    let game: Game = await getGameByName(gameName)
+    let game: Game|undefined = await getGameByName(gameName)
 
     if (game !== undefined) { // game already exists
 
