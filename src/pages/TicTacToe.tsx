@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom';
 
-import Cell from '../components/Cell.tsx'
+import Cell from '../components/Cell'
 
 import db from '../assets/js/firestore.js'
 import { Game, getGameByName, addGame, replaceGrid, addPlayer, getGameRef } from '../assets/js/games.js'
@@ -13,7 +13,7 @@ import { onSnapshot, doc } from "firebase/firestore"
  * This function checks if one player won by filling a row
  * Returns 1 or 2 if one of the player did win, 0 otherwise
  */
-function checkRows(grid) {
+function checkRows(grid: Array<Array<number>>) {
   for (let i = 0; i<3; i++) {
     let row = grid[i]
 
@@ -27,7 +27,7 @@ function checkRows(grid) {
  * This function checks if one player won by filling a column
  * Returns 1 or 2 if one of the player did win, 0 otherwise
  */
-function checkCols(grid) {
+function checkCols(grid: Array<Array<number>>) {
 
   for (let i = 0; i<3; i++) {
     if (grid[0][i] == grid[1][i] && grid[1][i] == grid[2][i])
@@ -42,7 +42,7 @@ function checkCols(grid) {
  * This function checks if one player won by filling a diagonal
  * Returns 1 or 2 if one of the player did win, 0 otherwise
  */
-function checkDiags(grid) {
+function checkDiags(grid: Array<Array<number>>) {
   if (grid[0][0] == grid[1][1] && grid[1][1] == grid[2][2]){
     if (grid[0][0] !== 0) return grid[0][0]
   }
@@ -64,13 +64,17 @@ function TicTacToe() {
   let [winner, setWinner] = useState(0)
   let [player, setPlayer] = useState(0)
 
-  const location = useLocation();
+  const location: any = useLocation();
   const gameName = location.state.gameName
 
-  async function getGame(gameName) {
+  async function getGame(gameName: string) {
     let game: Game = await getGameByName(gameName)
 
-    if (game !== null) { // game already exists
+    console.log(game)
+
+    if (game !== undefined) { // game already exists
+
+      console.log("Game exists")
 
       let cells = []
       for (let i = 0; i<3; i++){
@@ -104,26 +108,19 @@ function TicTacToe() {
       setPlayerTurn(1)
       setPlayer(1)
 
-      console.log(typeof game)
-
       await addGame(game)
     }
   }
 
   try {
     const unsub = onSnapshot(doc(db, "games", `game-${gameName}`), (doc) => {
-      const grid = doc.data().grid;
-      const playerTurn_data = doc.data().player_turn;
+      const grid = doc.data()!.grid;
+      const playerTurn_data = doc.data()!.player_turn;
 
       let cells = []
       for (let i = 0; i<3; i++){
         cells.push([grid[3*i],grid[3*i+1],grid[3*i+2]])
       }
-
-      let nb_cells_placed = 0;
-      grid.forEach(cell=>{
-        if (cell != 0) nb_cells_placed++;
-      })
 
       checkWinner(cells)  
       setGrid(cells)
@@ -144,7 +141,7 @@ function TicTacToe() {
 
 
 
-  const checkWinner = (grid) => { // checks weither a player has won 
+  const checkWinner = (grid: Array<Array<number>>) => { // checks weither a player has won 
     let win = checkCols(grid) || checkRows(grid) || checkDiags(grid)
 
     if (win !== 0) {
@@ -164,11 +161,6 @@ function TicTacToe() {
       let cells = [[...grid[0]],[...grid[1]],[...grid[2]]]
       
       cells[row_number][col_number] = playerTurn
-      
-      let nb_cells_placed = 0
-      grid.forEach(cell=>{
-        if (cell !== 0) nb_cells_placed++;
-      })
 
       let turn = -1;
 
@@ -189,14 +181,14 @@ function TicTacToe() {
 
   const resetGrid = async () => {
 
-    if (player !== 1 || player !== 2) return; // spectators cannot reset the game
+    if (player !== 1 && player !== 2) return; // spectators cannot reset the game
 
     setGrid([[0,0,0],[0,0,0],[0,0,0]])
     setPlayerTurn(1)
     setGameOver(false)
     setWinner(0)
 
-    await replaceGrid(Array(9).fill(0) , gameName, 1)
+    await replaceGrid(Array(3).fill(Array(3).fill(0)) , gameName, 1)
 
   }
 

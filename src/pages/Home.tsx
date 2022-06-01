@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 const Home = () => {
 
 	const [gameName, setGameName] = useState("")
-	const handleChangeGameName = event => {
+	const handleChangeGameName = (event: any) => {
 		setGameName(event.target.value)
 	}
 

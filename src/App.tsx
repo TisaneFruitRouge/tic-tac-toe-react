@@ -2,9 +2,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import TicTacToe from "./pages/TicTacToe";
 import Home from "./pages/Home";
 
-import './App.css'
-
-
 function App() {
   
   return (

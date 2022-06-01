@@ -1,7 +1,7 @@
 import Circle from '../assets/circle.svg'
 import Cross from '../assets/cross.svg'
 
-const Cell = (props) => {
+const Cell = (props: any) => {
 
 	return (
 		<div 
