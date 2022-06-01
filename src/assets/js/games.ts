@@ -59,7 +59,7 @@ async function addGame(game: Game) {
 
   try {
     await setDoc(gameRef, game);
-    console.log("Document written with ID: ", gameRef.id);
+    //console.log("Document written with ID: ", gameRef.id);
   } catch (e) {
     console.error("Error adding document: ", e);
   }

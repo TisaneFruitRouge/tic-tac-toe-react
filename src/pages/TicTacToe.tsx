@@ -70,11 +70,7 @@ function TicTacToe() {
   async function getGame(gameName: string) {
     let game: Game = await getGameByName(gameName)
 
-    console.log(game)
-
     if (game !== undefined) { // game already exists
-
-      console.log("Game exists")
 
       let cells = []
       for (let i = 0; i<3; i++){
