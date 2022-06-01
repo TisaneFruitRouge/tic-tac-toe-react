@@ -88,7 +88,7 @@ function TicTacToe() {
         addPlayer(gameName, game.nb_players)
       }
 
-      setPlayerTurn( game.player_turn ) // if odd, then it's the second player's turn
+      setPlayerTurn( game.player_turn )
       checkWinner(cells)
       setGrid(cells)
 
@@ -155,8 +155,6 @@ function TicTacToe() {
 
   // this function adds a mark on the grid
   const add_mark = async (row_number: number, col_number: number) => {
-    console.log(`${player} played`)
-    console.log(`Player turn ${playerTurn}`)
     if (grid[row_number][col_number] === 0 && !gameOver && (player == playerTurn)) { // check if the cell is empty or if the game is already over
       let cells = [[...grid[0]],[...grid[1]],[...grid[2]]]
       
@@ -167,17 +165,18 @@ function TicTacToe() {
         if (cell !== 0) nb_cells_placed++;
       })
 
-      console.log(playerTurn)
+      let turn = -1;
+
       if (playerTurn === 1) {
-        setPlayerTurn(2)
+        turn = 2
       }
       else {
-        setPlayerTurn(1)
+        turn = 1
       }
-      console.log(playerTurn)
 
       checkWinner(cells)  
-      await replaceGrid(cells, gameName, playerTurn) // making the change inside the firestore document
+      await replaceGrid(cells, gameName, turn) // making the change inside the firestore document
+      setPlayerTurn(turn)
       setGrid(cells)
 
     }
